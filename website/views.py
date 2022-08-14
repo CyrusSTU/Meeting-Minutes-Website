@@ -2,11 +2,10 @@ from flask import Blueprint, render_template, request, flash, jsonify, redirect,
 from flask_login import login_required, current_user
 from .models import Meeting, User
 from . import db
-import json
 
 views = Blueprint("views", __name__)
 
-
+# login route that handles the login form
 @views.route("/", methods=["GET", "POST"])
 @login_required
 def home():
@@ -63,6 +62,63 @@ def delete_meeting(id):
     db.session.delete(meeting)
     db.session.commit()
     return render_template("minutes.html", user=current_user)
+
+
+# function to search meeting
+@views.route("/search", methods=["GET", "POST"])
+@login_required
+def search_meeting():
+    if request.method == "POST":
+        search = request.form.get("search")
+        meetings = Meeting.query.filter(Meeting.title.contains(search)).all()
+        return render_template("minutes.html", meetings=meetings, user=current_user)
+    return render_template("minutes.html", user=current_user)
+
+
+# function to edit meeting
+@views.route("/edit/<int:id>", methods=["GET", "POST"])
+@login_required
+def edit_meeting(id):
+    meeting = Meeting.query.get_or_404(id)
+    if request.method == "POST":
+        title = request.form.get("title")
+        topic = request.form.get("topic")
+        attendees = request.form.get("attendees")
+        raised_by = request.form.get("raised_by")
+        actions_required = request.form.get("actions_required")
+        actioned_by = request.form.get("actioned_by")
+        subsequent_information = request.form.get("subsequent_information")
+        end_time = request.form.get("end_time")
+
+        if len(title) < 1:
+            flash("Please enter a title.", category="error")
+        elif len(topic) < 1:
+            flash("Please enter a topic.", category="error")
+        elif len(attendees) < 1:
+            flash("Please enter the attendees.", category="error")
+        elif len(raised_by) < 1:
+            flash("You cannot leave the raised by field empty.", category="error")
+        elif len(actions_required) < 1:
+            flash("Please enter the actions required.", category="error")
+        elif len(actioned_by) < 1:
+            flash("Please enter the actioned by.", category="error")
+        elif len(subsequent_information) < 1:
+            flash("Please enter any subsequent information.", category="error")
+        elif len(end_time) < 1:
+            flash("Please specify the date of completion.", category="error")
+        else:
+            # add to database
+            meeting.title = title
+            meeting.topic = topic
+            meeting.attendees = attendees
+            meeting.raised_by = raised_by
+            meeting.actions_required = actions_required
+            meeting.actioned_by = actioned_by
+            meeting.subsequent_information = subsequent_information
+            meeting.end_time = end_time
+            db.session.commit()
+            flash("Meeting updated successfully.", category="success")
+            return render_template("minutes.html", meeting=meeting, user=current_user)
 
 
 # @views.route("/delete-note", methods=["POST"])

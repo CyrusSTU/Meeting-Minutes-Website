@@ -1,62 +1,126 @@
 {% extends "base.html" %} {% block title %}Minutes{% endblock %} 
 
 {% block content%}
-<!--display data from database in a table format with a delete option-->
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Title:</th>
-      <th>Topic:</th>
-      <th>Date:</th>
-      <th>Absentees:</th>
-      <th>Raised by:</th>
-      <th>Actions required:</th>
-      <th>Actioned by:</th>
-      <th>Subsequent information:</th>
-      <th>Date of completion:</th>
-      <th>Delete:</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for meeting in user.meetings %}
-    <tr>
-      <th scope="row">{{ meeting.title }}</th>
-      <td>{{ meeting.topic }}</td>
-      <td>{{ meeting.attendees }}</td>
-      <td>{{ meeting.time }}</td>
-      <td>{{ meeting.raised_by }}</td>
-      <td>{{ meeting.actions_required }}</td>
-      <td>{{ meeting.actioned_by }}</td>
-      <td>{{ meeting.subsequent_information }}</td>
-      <td>{{ meeting.end_time }}</td>
-      <td>
+<br/>
+<h1 align = "center"> View Your Meeting Minutes</h1>
+<br/>
+  <table class="table table-striped center">
+    <thead>
+      <tr>
+        <th>Title:</th>
+        <th>Topic:</th>
+        <th>Date:</th>
+        <th>Absentees:</th>
+        <th>Raised by:</th>
+        <th>Actions required:</th>
+        <th>Actioned by:</th>
+        <th>Subsequent information:</th>
+        <th>Date of completion:</th>
+        <th>Delete row:</th>
+        <th>Edit row:</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for meeting in user.meetings %}
+      <tr>
+        <th scope="row">{{ meeting.title }}</th>
+        <td>{{ meeting.topic }}</td>
+        <td>{{ meeting.attendees }}</td>
+        <td>{{ meeting.time }}</td>
+        <td>{{ meeting.raised_by }}</td>
+        <td>{{ meeting.actions_required }}</td>
+        <td>{{ meeting.actioned_by }}</td>
+        <td>{{ meeting.subsequent_information }}</td>
+        <td>{{ meeting.end_time }}</td>
+        <td>
         <!--button to delete meeting row on table-->
-        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{ meeting.id }}">
-          Delete
-        </button>
-        <!--modal to confirm delete-->
-        <div class="modal fade" id="deleteModal{{ meeting.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete Meeting</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                Are you sure you want to delete this meeting?
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <form action="{{ url_for('views.delete_meeting', id=meeting.id) }}" method="post">
+          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{ meeting.id }}">
+            Delete
+          </button>
+          <!--modal to confirm delete-->
+          <div class="modal fade" id="deleteModal{{ meeting.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="deleteModalLabel">Delete Meeting</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete this meeting?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <form action="{{ url_for('views.delete_meeting', id=meeting.id) }}" method="post">
                   <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
               </div>
             </div>
           </div>
       </td>
+      <td>
+        <!--button to edit meeting row on table-->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal{{ meeting.id }}">
+          Edit
+        </button>
+        <!--modal to edit meeting row-->
+        <div class="modal fade" id="editModal{{ meeting.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Meeting</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form action="{{ url_for('views.edit_meeting', id=meeting.id) }}" method="post">
+                  <div class="form-group">
+                    <label for="title">Title:</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ meeting.title }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="topic">Topic:</label>
+                    <input type="text" class="form-control" id="topic" name="topic" value="{{ meeting.topic }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="attendees">Attendees:</label>
+                    <input type="text" class="form-control" id="attendees" name="attendees" value="{{ meeting.attendees }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="time">Time:</label>
+                    <input type="text" class="form-control" id="time" name="time" value="{{ meeting.time }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="raised_by">Raised by:</label>
+                    <input type="text" class="form-control" id="raised_by" name="raised_by" value="{{ meeting.raised_by }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="actions_required">Actions required:</label>
+                    <input type="text" class="form-control" id="actions_required" name="actions_required" value="{{ meeting.actions_required }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="actioned_by">Actioned by:</label>
+                    <input type="text" class="form-control" id="actioned_by" name="actioned_by" value="{{ meeting.actioned_by }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="subsequent_information">Subsequent information:</label>
+                    <input type="text" class="form-control" id="subsequent_information" name="subsequent_information" value="{{ meeting.subsequent_information }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="end_time">End time:</label>
+                    <input type="text" class="form-control" id="end_time" name="end_time" value="{{ meeting.end_time }}">
+                  </div>
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>
     </tr>
     {% endfor %}
   </tbody>
+</table>
 {% endblock %}
