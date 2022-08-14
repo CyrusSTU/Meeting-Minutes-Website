@@ -1,0 +1,57 @@
+{% extends "base.html" %} 
+
+{% block title %}Home{% endblock %} 
+
+{% block head %}
+    <script src="/static/index.js"></script>
+{% endblock %}
+
+{% block content%}
+</ul>
+<h1 align = "center">Meeting Minutes</h1>
+<form action ="{{ url_for("views.home")}}" method="post">
+  <div id = "meeting-minutes">
+    <div>
+      <label for="meeting">Title:</label>
+      <input type="text" class="form-control" id="meeting" name = "meeting" placeholder="Enter meeting title:" maxlength="30">
+    </div>
+    <div>
+      <label for="Topic">Topic</label>
+      <input type="text" class="form-control" id="topic" name = "topic" placeholder="Enter topic:" maxlength="50">
+    </div>
+    <div>
+      <label for="time">Date & Time:</label>
+      <input type="datetime-local" class="form-control" id="time" name = "time" placeholder="Enter date:">
+    </div>
+    <div>
+      <label for="absentees">Absentees:</label>
+      <input type="text" class="form-control" id="absentees" name = "absentees" placeholder="Enter abseentee(s):">
+    </div>
+    <div>
+      <label for="raised_by">Raised by:</label>
+      <input type="text" class="form-control" id="raised_by" name = "raised_by" placeholder="Raised by:">
+    </div>
+    <div>
+      <label for="actions-required">Actions required:</label>
+      <textarea class="form-control" rows="5" id="actions_required" name = "actions_required" placeholder="Enter actions:"></textarea>
+    </div>
+    <div>
+      <label for="actioned-by">Actioned by:</label>
+      <input type ="text" class="form-control" id="actioned_by" name = "actioned_by" placeholder="Actioned by:">
+    </div>
+    <div>
+      <label for="subsequent-information">Subsequent information:</label>
+      <textarea class="form-control" rows="5" id="subsequent_information" name = "subsequent_information" placeholder="Enter subsequent information:"></textarea>
+    </div>
+    <div>
+      <label for="endTime">Date of completion:</label>
+      <input type="datetime-local" class="form-control" id="end_time" name = "end_time" placeholder="Enter date:">
+    </div>
+    <br/>
+    <div class = "text-center">
+      <!-- Submit data button -->
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+    <br/>
+</form>
+{% endblock %}
