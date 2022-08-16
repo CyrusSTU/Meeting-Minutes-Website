@@ -54,6 +54,20 @@ def home():
     return render_template("home.html", user=current_user)
 
 
+# function for searching meetings
+@views.route("/search", methods=["GET", "POST"])
+@login_required
+def search():
+    if request.method == "POST":
+        search_term = request.form.get("search_term")
+        meetings = Meeting.query.filter(Meeting.title.contains(search_term)).all()
+        flash("Search results for: {}".format(search_term), category="success")
+        return render_template("search.html", meetings=meetings, user=current_user)
+    else:
+        meetings = Meeting.query.all()
+        return render_template("search.html", meetings=meetings, user=current_user)
+
+
 # function for delete modal
 @views.route("/delete/<int:id>", methods=["POST"])
 @login_required
@@ -62,20 +76,6 @@ def delete_meeting(id):
     db.session.delete(meeting)
     db.session.commit()
     return render_template("minutes.html", user=current_user)
-
-
-# function to search for a specific meeting row by title in the minutes table and display it
-@views.route("/search-meeting", methods=["GET", "POST"])
-@login_required
-def search():
-    if request.method == "POST":
-        title = request.form.get("title")
-        meeting = Meeting.query.filter_by(title=title).first()
-        if meeting:
-            return render_template("search.html", meeting=meeting, user=current_user)
-        else:
-            flash("Meeting not found.", category="error")
-    return render_template("search.html", user=current_user)
 
 
 # function to edit meeting
@@ -122,14 +122,6 @@ def edit_meeting(id):
             db.session.commit()
             flash("Meeting updated successfully.", category="success")
             return render_template("minutes.html", meeting=meeting, user=current_user)
-
-
-# function to view specific meeting row in minutes page
-@views.route("/view/<int:id>", methods=["GET", "POST"])
-@login_required
-def view_meeting(id):
-    meeting = Meeting.query.get_or_404(id)
-    return render_template("minutes.html", meeting=meeting, user=current_user)
 
 
 # @views.route("/delete-note", methods=["POST"])

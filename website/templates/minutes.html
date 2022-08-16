@@ -122,12 +122,6 @@
     </tr>
     {% endfor %}
   </tbody>
-  <!--Search option for specific meeting row by filtering for meeting title-->
-  <form action="{{ url_for('views.search-meeting') }}" method="post">
-    <div class="form-group">
-      <label for="search">Search:</label>
-      <input type="text" class="form-control" id="search" name="search" placeholder="Search by title">
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
 </table>
 {% endblock %}
+"""
