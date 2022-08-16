@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from .models import Meeting, User
 from . import db
@@ -64,15 +64,18 @@ def delete_meeting(id):
     return render_template("minutes.html", user=current_user)
 
 
-# function to search meeting
-@views.route("/search", methods=["GET", "POST"])
+# function to search for a specific meeting row by title in the minutes table and display it
+@views.route("/search-meeting", methods=["GET", "POST"])
 @login_required
-def search_meeting():
+def search():
     if request.method == "POST":
-        search = request.form.get("search")
-        meetings = Meeting.query.filter(Meeting.title.contains(search)).all()
-        return render_template("minutes.html", meetings=meetings, user=current_user)
-    return render_template("minutes.html", user=current_user)
+        title = request.form.get("title")
+        meeting = Meeting.query.filter_by(title=title).first()
+        if meeting:
+            return render_template("search.html", meeting=meeting, user=current_user)
+        else:
+            flash("Meeting not found.", category="error")
+    return render_template("search.html", user=current_user)
 
 
 # function to edit meeting
@@ -119,6 +122,14 @@ def edit_meeting(id):
             db.session.commit()
             flash("Meeting updated successfully.", category="success")
             return render_template("minutes.html", meeting=meeting, user=current_user)
+
+
+# function to view specific meeting row in minutes page
+@views.route("/view/<int:id>", methods=["GET", "POST"])
+@login_required
+def view_meeting(id):
+    meeting = Meeting.query.get_or_404(id)
+    return render_template("minutes.html", meeting=meeting, user=current_user)
 
 
 # @views.route("/delete-note", methods=["POST"])
